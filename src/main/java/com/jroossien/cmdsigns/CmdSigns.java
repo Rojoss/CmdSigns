@@ -1,6 +1,12 @@
 package com.jroossien.cmdsigns;
 
+import com.jroossien.cmdsigns.menu.Menu;
+import com.jroossien.cmdsigns.menu.TemplateMenu;
+import com.jroossien.cmdsigns.signs.TemplateManager;
+import org.bukkit.entity.Player;
+import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.logging.Logger;
 
@@ -8,7 +14,10 @@ public class CmdSigns extends JavaPlugin {
 
     private static CmdSigns instance;
 
-    private final Logger log = Logger.getLogger("Essence");
+    private TemplateManager tm;
+    private TemplateMenu tMenu;
+
+    private final Logger log = Logger.getLogger("CmdSigns");
 
     @Override
     public void onDisable() {
@@ -21,7 +30,17 @@ public class CmdSigns extends JavaPlugin {
         instance = this;
         log.setParent(this.getLogger());
 
+        tm = new TemplateManager(this);
+        tMenu = new TemplateMenu(this);
+
+        registerListeners();
+
         log("loaded successfully");
+    }
+
+    private void registerListeners() {
+        PluginManager pm = getServer().getPluginManager();
+        pm.registerEvents(new Menu.Events(), this);
     }
 
     public void log(Object msg) {
@@ -36,5 +55,13 @@ public class CmdSigns extends JavaPlugin {
 
     public static CmdSigns inst() {
         return instance;
+    }
+
+    public TemplateManager getTM() {
+        return tm;
+    }
+
+    public TemplateMenu getTMenu() {
+        return tMenu;
     }
 }
