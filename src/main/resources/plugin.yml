@@ -1,0 +1,6 @@
+main : ${project.groupId}.cmdsigns.CmdSigns
+name: CmdSigns
+version: ${project.version}
+description: ${project.description}
+author: ${project.author}
+softdepend: [Vault]
