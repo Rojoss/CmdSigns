@@ -31,12 +31,16 @@ public class TemplateManager {
         for (Map.Entry<String, File> entry : configFiles.entrySet()) {
             YamlConfiguration templateCfg = YamlConfiguration.loadConfiguration(entry.getValue());
 
-            boolean enabled = templateCfg.getBoolean("enabled");
-            int uniqueLine = templateCfg.getInt("uniqueLine");
             String[] syntax = new String[] {templateCfg.getString("syntax.1"), templateCfg.getString("syntax.2"), templateCfg.getString("syntax.3"), templateCfg.getString("syntax.4")};
             String[] cmds = new String[] {templateCfg.getString("commands.left"), templateCfg.getString("commands.right"), templateCfg.getString("commands.shift-left"), templateCfg.getString("commands.shift-right")};
+            int uniqueLine = templateCfg.getInt("uniqueLine");
+            boolean enabled = templateCfg.getBoolean("enabled");
+            boolean playerCmd = templateCfg.getBoolean("playerCmd");
+            boolean ignoreColors = templateCfg.getBoolean("ignoreColors");
+            int delay = templateCfg.getInt("delay");
+            String cost = templateCfg.getString("cost");
 
-            templateMap.put(entry.getKey(), new SignTemplate(templateCfg, entry.getKey(), syntax, cmds, uniqueLine-1, enabled));
+            templateMap.put(entry.getKey(), new SignTemplate(templateCfg, entry.getKey(), syntax, cmds, uniqueLine-1, enabled, playerCmd, ignoreColors, delay, cost));
         }
 
         templates = templateMap;
@@ -51,6 +55,10 @@ public class TemplateManager {
         YamlConfiguration templateCfg = YamlConfiguration.loadConfiguration(file);
         templateCfg.set("enabled", true);
         templateCfg.set("uniqueLine", 1);
+        templateCfg.set("playerCmd", true);
+        templateCfg.set("ignoreColors", true);
+        templateCfg.set("delay", 0);
+        templateCfg.set("cost", "");
         templateCfg.set("syntax.1", "");
         templateCfg.set("syntax.2", "");
         templateCfg.set("syntax.3", "");
@@ -65,7 +73,7 @@ public class TemplateManager {
             e.printStackTrace();
         }
 
-        SignTemplate template = new SignTemplate(templateCfg, name, new String[] {"", "", "", ""}, new String[] {"", "", "", ""}, 0, true);
+        SignTemplate template = new SignTemplate(templateCfg, name, new String[] {"", "", "", ""}, new String[] {"", "", "", ""}, 0, true, true, true, 0, "");
         templates.put(name, template);
         return template;
     }
