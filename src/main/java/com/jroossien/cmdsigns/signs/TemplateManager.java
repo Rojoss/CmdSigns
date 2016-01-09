@@ -5,10 +5,8 @@ import com.jroossien.cmdsigns.util.Util;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.io.IOException;
+import java.util.*;
 
 public class TemplateManager {
 
@@ -38,10 +36,42 @@ public class TemplateManager {
             String[] syntax = new String[] {templateCfg.getString("syntax.1"), templateCfg.getString("syntax.2"), templateCfg.getString("syntax.3"), templateCfg.getString("syntax.4")};
             String[] cmds = new String[] {templateCfg.getString("commands.left"), templateCfg.getString("commands.right"), templateCfg.getString("commands.shift-left"), templateCfg.getString("commands.shift-right")};
 
-            templateMap.put(entry.getKey(), new SignTemplate(entry.getKey(), syntax, cmds, uniqueLine, enabled));
+            templateMap.put(entry.getKey(), new SignTemplate(templateCfg, entry.getKey(), syntax, cmds, uniqueLine-1, enabled));
         }
 
         templates = templateMap;
+    }
+
+    public SignTemplate createTemplate(String name) {
+        if (hasTemplate(name)) {
+            return getTemplate(name);
+        }
+
+        File file = new File(templateDir, name + ".yml");
+        YamlConfiguration templateCfg = YamlConfiguration.loadConfiguration(file);
+        templateCfg.set("enabled", true);
+        templateCfg.set("uniqueLine", 1);
+        templateCfg.set("syntax.1", "");
+        templateCfg.set("syntax.2", "");
+        templateCfg.set("syntax.3", "");
+        templateCfg.set("syntax.4", "");
+        templateCfg.set("commands.left", "");
+        templateCfg.set("commands.right", "");
+        templateCfg.set("commands.shift-left", "");
+        templateCfg.set("commands.shift-right", "");
+        try {
+            templateCfg.save(file);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        SignTemplate template = new SignTemplate(templateCfg, name, new String[] {"", "", "", ""}, new String[] {"", "", "", ""}, 0, true);
+        templates.put(name, template);
+        return template;
+    }
+
+    public void setTemplate(SignTemplate template) {
+        templates.put(template.getName(), template);
     }
 
     public SignTemplate getTemplate(String name) {
@@ -61,5 +91,9 @@ public class TemplateManager {
 
     public List<SignTemplate> getList() {
         return new ArrayList<SignTemplate>(templates.values());
+    }
+
+    public File getTemplateDir() {
+        return templateDir;
     }
 }
