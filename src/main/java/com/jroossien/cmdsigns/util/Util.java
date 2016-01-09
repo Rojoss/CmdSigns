@@ -2,6 +2,7 @@ package com.jroossien.cmdsigns.util;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Color;
+import org.bukkit.command.CommandSender;
 
 import java.io.File;
 import java.io.FilenameFilter;
@@ -236,5 +237,34 @@ public class Util {
             }
         }
         return null;
+    }
+
+
+    /**
+     * Checks if the sender has the specified permission.
+     * It will check recursively at starting at the bottom component of the permission.
+     * So if the input permission is 'cmdsigns.signs.create.cmd' the player needs to have any of the following permissions.
+     * cmdsigns.*
+     * cmdsigns.signs.*
+     * cmdsigns.signs.create.*
+     * cmdsigns.signs.create.cmd
+     * @param sender The sender to do the permission check on. (Remember that Player is a CommandSender!)
+     * @param permission The permission to check. This should be the FULL permission string not a sub permission.
+     * @return true if the sender has any of the permissions and false if not.
+     */
+    public static boolean hasPermission(CommandSender sender, String permission) {
+        permission = permission.toLowerCase().trim();
+        if (sender.hasPermission(permission)) {
+            return true;
+        }
+        String[] components = permission.split("\\.");
+        String perm = "";
+        for (String component : components) {
+            perm += component + ".";
+            if (sender.hasPermission(perm + "*")) {
+                return true;
+            }
+        }
+        return false;
     }
 }
