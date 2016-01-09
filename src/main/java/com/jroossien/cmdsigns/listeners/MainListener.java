@@ -54,6 +54,7 @@ public class MainListener implements Listener {
         if (block.getState() instanceof Sign) {
             return (Sign)block.getState();
         }
+        /*
         //Check for attached blocks.
         BlockFace[] dirs = new BlockFace[] {BlockFace.NORTH, BlockFace.EAST, BlockFace.SOUTH, BlockFace.WEST, BlockFace.UP, BlockFace.DOWN};
         for (BlockFace dir : dirs) {
@@ -68,6 +69,7 @@ public class MainListener implements Listener {
                 }
             }
         }
+        */
         return null;
     }
 
@@ -150,7 +152,7 @@ public class MainListener implements Listener {
         if (block == null || block.getType() == Material.AIR) {
             return;
         }
-        Sign signBlock = getSign(block, false);
+        Sign signBlock = getSign(block, true);
         if (signBlock == null) {
             return;
         }
