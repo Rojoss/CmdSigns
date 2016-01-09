@@ -1,6 +1,7 @@
 package com.jroossien.cmdsigns;
 
 import com.jroossien.cmdsigns.commands.Commands;
+import com.jroossien.cmdsigns.listeners.MainListener;
 import com.jroossien.cmdsigns.menu.Menu;
 import com.jroossien.cmdsigns.menu.TemplateMenu;
 import com.jroossien.cmdsigns.signs.TemplateManager;
@@ -51,6 +52,7 @@ public class CmdSigns extends JavaPlugin {
     private void registerListeners() {
         PluginManager pm = getServer().getPluginManager();
         pm.registerEvents(new Menu.Events(), this);
+        pm.registerEvents(new MainListener(this), this);
     }
 
     public void log(Object msg) {
