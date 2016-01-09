@@ -15,4 +15,13 @@ public enum CmdTrigger {
     public String getName() {
         return name;
     }
+
+    public static CmdTrigger fromID(int id) {
+        for (CmdTrigger trigger : values()) {
+            if (trigger.ordinal() == id) {
+                return trigger;
+            }
+        }
+        return LEFT;
+    }
 }
