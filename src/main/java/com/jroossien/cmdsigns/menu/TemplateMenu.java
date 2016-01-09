@@ -123,9 +123,39 @@ public class TemplateMenu extends Menu {
                     player.closeInventory();
                     //TODO: Send message that user can type the command in chat.
                 }
+            } else if (event.getRawSlot() == 37) {
+                //Player/Console command
+                template.setPlayerCmd(!template.isPlayerCmd());
+                template.save();
+                updateContent(player);
+            } else if (event.getRawSlot() == 38) {
+                //Ignore/Match colors
+                template.setIgnoreColors(!template.isIgnoreColors());
+                template.save();
+                updateContent(player);
             } else if (event.getRawSlot() == 40) {
                 //Enable/disable
                 template.setEnabled(!template.isEnabled());
+                template.save();
+                updateContent(player);
+            } else if (event.getRawSlot() == 42) {
+                //Set Delay
+                if (event.isLeftClick()) {
+                    //TODO: Start input session instead (placeholder)
+                    template.setDelay(60);
+                } else if (event.isRightClick()) {
+                    template.setDelay(0);
+                }
+                template.save();
+                updateContent(player);
+            } else if (event.getRawSlot() == 43) {
+                //Set Cost
+                if (event.isLeftClick()) {
+                    //TODO: Start input session instead (placeholder)
+                    template.setCost("$100");
+                } else if (event.isRightClick()) {
+                    template.setCost("");
+                }
                 template.save();
                 updateContent(player);
             }
@@ -193,6 +223,21 @@ public class TemplateMenu extends Menu {
                         template.getCommand(trigger) == null || template.getCommand(trigger).isEmpty() ? "&c&onone" : "&e" + template.getCommand(trigger), "&7Click to edit this command.", "&7Shift right click to clear it."));
             }
 
+            if (template.isPlayerCmd()) {
+                setSlot(37, new EItem(Material.SKULL_ITEM, 1, (short)3).setName("&6&lPlayer Command").setLore("&7The commands will be executed by the &6player&7.", "&8Click to change to console."), player);
+            } else {
+                setSlot(37, new EItem(Material.COMMAND).setName("&e&lConsole Command").setLore("&7The commands will be executed by the &econsole&7.",
+                        "&7You can use the &f&l{player} &7placeholder in any command.", "&8Click to change to player."), player);
+            }
+
+            if (template.isIgnoreColors()) {
+                setSlot(38, new EItem(Material.BUCKET).setName("&6&lIgnoring colors").setLore("&7Colors on the unique line will be ignored.",
+                        "&cDon't put any color codes in the syntax of the unique line!", "&aYou can put any colors you want on the actual sign.", "&8Click to change to matching colors."), player);
+            } else {
+                setSlot(38, new EItem(Material.WATER_BUCKET).setName("&e&lMatching colors").setLore("&7Colors on the unique line have to match exactly.",
+                        "&7For example if you put &9[heal] &7as syntax", "&7On the sign you need to put &9[heal] &7too.", "&8Click to change to ignoring colors."), player);
+            }
+
             if (template.isEnabled()) {
                 setSlot(40, new EItem(Material.INK_SACK, 1, (short)10).setName("&a&lEnabled").setLore("&7This template is currently &aenabled&7.", "&8Click to disable the template."), player);
             } else {
@@ -200,7 +245,21 @@ public class TemplateMenu extends Menu {
                         "&7&oUsers will still be blocked", "&7&ofrom creating/breaking this sign.", "&8Click to enable the template."), player);
             }
 
-            //TODO: Cost, Delay, Ignore/Match colors, Console/Player command.
+            if (template.getDelay() > 0) {
+                setSlot(42, new EItem(Material.WATCH).setName("&6&l" + template.getDelay() + " Seconds Delay").setLore("&7Players have to wait &e" + template.getDelay() + " &7seconds",
+                        "&7after using the sign to use it again.", "&aLeft &7click to &aedit &7the delay.", "&eRight &7click to &eremove &7the delay."), player);
+            } else {
+                setSlot(42, new EItem(Material.WATCH).setName("&c&lNo Delay").setLore("&aClick to set a delay.",
+                        "&7Players will have to wait xxx seconds", "&7after using the sign to use it again", "&7when a delay is set."), player);
+            }
+
+            if (template.getCost() != null && !template.getCost().isEmpty()) {
+                setSlot(43, new EItem(Material.GOLD_INGOT).setName("&6&lCost&8&l: &e&l" + template.getCost()).setLore("&7Players have to pay &e" + template.getCost() + " &7to use the sign.",
+                        "&aLeft &7click to &aedit &7the cost.", "&eRight &7click to &eremove &7the cost."), player);
+            } else {
+                setSlot(43, new EItem(Material.GOLD_INGOT).setName("&c&lNo Cost").setLore("&aClick to set a cost.",
+                        "&7Players will have to pay money or items", "&7to use the sign when a cost is set."), player);
+            }
         }
     }
 
