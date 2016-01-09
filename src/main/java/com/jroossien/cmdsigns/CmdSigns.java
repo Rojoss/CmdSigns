@@ -1,18 +1,21 @@
 package com.jroossien.cmdsigns;
 
+import com.jroossien.cmdsigns.commands.Commands;
 import com.jroossien.cmdsigns.menu.Menu;
 import com.jroossien.cmdsigns.menu.TemplateMenu;
 import com.jroossien.cmdsigns.signs.TemplateManager;
-import org.bukkit.entity.Player;
+import org.bukkit.command.Command;
+import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.logging.Logger;
 
 public class CmdSigns extends JavaPlugin {
 
     private static CmdSigns instance;
+
+    private Commands cmds;
 
     private TemplateManager tm;
     private TemplateMenu tMenu;
@@ -30,12 +33,19 @@ public class CmdSigns extends JavaPlugin {
         instance = this;
         log.setParent(this.getLogger());
 
+        cmds = new Commands(this);
+
         tm = new TemplateManager(this);
         tMenu = new TemplateMenu(this);
 
         registerListeners();
 
         log("loaded successfully");
+    }
+
+    @Override
+    public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
+        return cmds.onCommand(sender, cmd, label, args);
     }
 
     private void registerListeners() {

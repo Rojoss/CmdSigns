@@ -4,3 +4,8 @@ version: ${project.version}
 description: ${project.description}
 author: ${project.author}
 softdepend: [Vault]
+commands:
+  signs:
+    description: Displays the signs templates menu.
+    usage: /<command>
+    aliases: [templates]
