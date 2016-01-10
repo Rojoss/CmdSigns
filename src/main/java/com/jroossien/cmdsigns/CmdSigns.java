@@ -1,6 +1,7 @@
 package com.jroossien.cmdsigns;
 
 import com.jroossien.cmdsigns.commands.Commands;
+import com.jroossien.cmdsigns.config.messages.MessageCfg;
 import com.jroossien.cmdsigns.listeners.MainListener;
 import com.jroossien.cmdsigns.menu.Menu;
 import com.jroossien.cmdsigns.menu.TemplateMenu;
@@ -15,6 +16,8 @@ import java.util.logging.Logger;
 public class CmdSigns extends JavaPlugin {
 
     private static CmdSigns instance;
+
+    private MessageCfg msgCfg;
 
     private Commands cmds;
 
@@ -33,6 +36,8 @@ public class CmdSigns extends JavaPlugin {
     public void onEnable() {
         instance = this;
         log.setParent(this.getLogger());
+
+        msgCfg = new MessageCfg("plugins/CmdSigns/Messages.yml");
 
         cmds = new Commands(this);
 
@@ -67,6 +72,10 @@ public class CmdSigns extends JavaPlugin {
 
     public static CmdSigns inst() {
         return instance;
+    }
+
+    public MessageCfg getMsgCfg() {
+        return msgCfg;
     }
 
     public TemplateManager getTM() {
