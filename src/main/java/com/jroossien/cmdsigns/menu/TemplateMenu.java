@@ -1,6 +1,8 @@
 package com.jroossien.cmdsigns.menu;
 
 import com.jroossien.cmdsigns.CmdSigns;
+import com.jroossien.cmdsigns.config.messages.Msg;
+import com.jroossien.cmdsigns.config.messages.Param;
 import com.jroossien.cmdsigns.signs.CmdTrigger;
 import com.jroossien.cmdsigns.signs.SignTemplate;
 import com.jroossien.cmdsigns.signs.TemplateManager;
@@ -26,7 +28,7 @@ public class TemplateMenu extends Menu {
     private Map<UUID, String> input = new HashMap<UUID, String>();
 
     public TemplateMenu(CmdSigns cs) {
-        super(cs, "template-edit", 6, "&9&lTemplate Editing");
+        super(cs, "template-edit", 6, Msg.TITLE.getMsg());
         this.cs = cs;
         this.tm = cs.getTM();
     }
@@ -56,14 +58,14 @@ public class TemplateMenu extends Menu {
             if (event.getRawSlot() == 0) {
                 //Previous page
                 int page = Util.getInt(menu.split("-")[1]);
-                if (page > 1) {
+                if (page >= 1) {
                     playerMenu.put(uuid, "main-" + (page-1));
                     updateContent(player);
                 }
             } else if (event.getRawSlot() == 8) {
                 //Next page
                 int page = Util.getInt(menu.split("-")[1]);
-                if (tm.getTemplates().size() > page * 45) {
+                if (tm.getTemplates().size() > ((page+1) * 45)) {
                     playerMenu.put(uuid, "main-" + (page+1));
                     updateContent(player);
                 }
@@ -71,7 +73,7 @@ public class TemplateMenu extends Menu {
                 //New template
                 input.put(uuid, "name");
                 player.closeInventory();
-                //TODO: Send message that user can type name of template in chat.
+                Msg.NEW_TEMPLATE.send(player);
             } else if (event.getRawSlot() == 7) {
                 //Close menu
                 playerMenu.remove(uuid);
@@ -111,7 +113,7 @@ public class TemplateMenu extends Menu {
                 } else {
                     input.put(uuid, "syntax-" + (event.getRawSlot()-18));
                     player.closeInventory();
-                    //TODO: Send message that user can type the syntax in chat.
+                    Msg.EDIT_SYNTAX.send(player, Param.P("{line}", (event.getRawSlot()-18)));
                 }
             } else if (event.getRawSlot() >= 23 && event.getRawSlot() <= 26) {
                 //Edit commands
@@ -122,7 +124,7 @@ public class TemplateMenu extends Menu {
                 } else {
                     input.put(uuid, "cmd-" + (event.getRawSlot()-23));
                     player.closeInventory();
-                    //TODO: Send message that user can type the command in chat.
+                    Msg.EDIT_SYNTAX.send(player, Param.P("{type}", CmdTrigger.fromID((event.getRawSlot()-23)).getName()));
                 }
             } else if (event.getRawSlot() == 37) {
                 //Player/Console command
@@ -173,11 +175,11 @@ public class TemplateMenu extends Menu {
         clearMenu(player);
         if (menu.startsWith("main")) {
             //Main menu
-            setSlot(0, new EItem(Material.SKULL_ITEM).setName("&6&lPrevious Page").setSkull("MHF_ArrowLeft").addAllFlags(true), player);
-            setSlot(1, new EItem(Material.PAPER).setName("&6&lInformation").setLore("&7Click on any of the &asigns &7to &aedit &7that template.", "&7Click on the &elog &7to create a &enew &7template."), player);
-            setSlot(4, new EItem(Material.LOG).setName("&a&lNew Template").setLore("&7Adds a new template to the list.", "&7The menu will close so you type a name in chat.", "&7When it's added click on the sign", "&7to set it up and enable it."), player);
-            setSlot(7, new EItem(Material.STAINED_CLAY, 1, (short) 14).setName("&c&lClose").setLore("&7Close the template editing menu."), player);
-            setSlot(8, new EItem(Material.SKULL_ITEM).setName("&6&lNext Page").setSkull("MHF_ArrowRight").addAllFlags(true), player);
+            setSlot(0, new EItem(Material.SKULL_ITEM).setName(Msg.PREV_PAGE.getMsg()).setSkull("MHF_ArrowLeft").addAllFlags(true), player);
+            setSlot(1, new EItem(Material.PAPER).setName(Msg.INFO.getMsg()).setLore(Msg.INFO_MAIN.getMsg()), player);
+            setSlot(4, new EItem(Material.LOG).setName(Msg.ADD_TEMPLATE.getMsg()).setLore(Msg.ADD_TEMPLATE_DESC.getMsg()), player);
+            setSlot(7, new EItem(Material.STAINED_CLAY, 1, (short) 14).setName(Msg.CLOSE.getMsg()).setLore(Msg.CLOSE_DESC.getMsg()), player);
+            setSlot(8, new EItem(Material.SKULL_ITEM).setName(Msg.NEXT_PAGE.getMsg()).setSkull("MHF_ArrowRight").addAllFlags(true), player);
 
             int page = Util.getInt(menu.split("-")[1]);
 
@@ -192,10 +194,9 @@ public class TemplateMenu extends Menu {
         } else {
             //Template edit menu
             String name = menu.split("-")[1];
-            setSlot(0, new EItem(Material.SKULL_ITEM).setName("&6&lBack").setSkull("MHF_ArrowLeft").addAllFlags(true), player);
-            setSlot(1, new EItem(Material.PAPER).setName("&6&lInformation").setLore("&7Click on the &anametags &7to edit the &asyntax &7of each line.",
-                    "&7Click on the &ecommand blocks &7to set the  &ecommands&7.", "&7On the &bbottom &7you can modify extra &bsettings&7.", "&7For example you can set a cost and/or delay etc."), player);
-            setSlot(8, new EItem(Material.STAINED_CLAY, 1, (short) 14).setName("&c&lClose").setLore("&7Close the template editing menu."), player);
+            setSlot(0, new EItem(Material.SKULL_ITEM).setName(Msg.BACK.getMsg()).setSkull("MHF_ArrowLeft").addAllFlags(true), player);
+            setSlot(1, new EItem(Material.PAPER).setName(Msg.INFO.getMsg()).setLore(Msg.INFO_TEMPLATE.getMsg()), player);
+            setSlot(8, new EItem(Material.STAINED_CLAY, 1, (short) 14).setName(Msg.CLOSE.getMsg()).setLore(Msg.CLOSE_DESC.getMsg()), player);
 
             int[] emptySlots = new int[] {9,10,11,12,13,14,15,16,17, 22, 27,28,29,30,31,32,33,34,35, 36,39,41,44, 45,46,47,48,49,50,51,52,53};
             for (int slot : emptySlots) {
@@ -204,62 +205,54 @@ public class TemplateMenu extends Menu {
 
             SignTemplate template = tm.getTemplate(name);
             if (template == null) {
-                setSlot(4, new EItem(Material.SIGN).setName("&e&l" + name).setLore("&c&lNo template data found!", "&7Try closing and reopening the menu."), player);
+                setSlot(4, new EItem(Material.SIGN).setName("&e&l" + name).setLore(Msg.NO_DATA.getMsg()), player);
                 return;
             }
             setSlot(4, new EItem(Material.SIGN).setName("&e&l" + name).setLore("&7" + template.getSyntax(0), "&7" + template.getSyntax(1), "&7" + template.getSyntax(2), "&7" + template.getSyntax(3)), player);
 
             for (int i = 0; i < 4; i++) {
-                EItem item = new EItem(Material.NAME_TAG, i+1).setName("&6Line " + (i+1)).setLore(template.getSyntax(i) == null || template.getSyntax(i).isEmpty() ? "&c&oempty" : "&e" + template.getSyntax(i),
-                        "&7Click to edit the syntax of this line.", "&7Shift right click to clear it.", "&7Shift left click to make this the unique line.");
+                EItem item = new EItem(Material.NAME_TAG, i+1).setName(Msg.LINE.getMsg() + " " + (i+1)).setLore(
+                        template.getSyntax(i) == null || template.getSyntax(i).isEmpty() ? Msg.EMPTY.getMsg() : "&e" + template.getSyntax(i), Msg.SYNTAX_DESC.getMsg());
                 if (template.getUniqueLine() == i) {
                     item.makeGlowing(true);
-                    item.addLore("&dThis is the &d&lunique line&d!", "&dThis means any sign matching this line", "&dwill be considered a &5&l" + template.getName() + " &dsign!");
+                    item.addLore(Msg.UNIQUE_LINE.getMsg(Param.P("{template}", template.getName())));
                 }
                 setSlot(i+18, item);
             }
 
             for (CmdTrigger trigger : CmdTrigger.values()) {
                 setSlot(trigger.ordinal() + 23, new EItem(Material.COMMAND, trigger.ordinal() + 1).setName("&6" + trigger.getName()).setLore(
-                        template.getCommand(trigger) == null || template.getCommand(trigger).isEmpty() ? "&c&onone" : "&e" + template.getCommand(trigger), "&7Click to edit this command.", "&7Shift right click to clear it."));
+                        template.getCommand(trigger) == null || template.getCommand(trigger).isEmpty() ? Msg.NONE.getMsg() : "&e" + template.getCommand(trigger), Msg.CMD_DESC.getMsg()));
             }
 
             if (template.isPlayerCmd()) {
-                setSlot(37, new EItem(Material.SKULL_ITEM, 1, (short)3).setName("&6&lPlayer Command").setLore("&7The commands will be executed by the &6player&7.", "&8Click to change to console."), player);
+                setSlot(37, new EItem(Material.SKULL_ITEM, 1, (short)3).setName(Msg.PLAYER_CMD.getMsg()).setLore(Msg.PLAYER_CMD_DESC.getMsg()), player);
             } else {
-                setSlot(37, new EItem(Material.COMMAND).setName("&e&lConsole Command").setLore("&7The commands will be executed by the &econsole&7.",
-                        "&7You can use the &f&l{player} &7placeholder in any command.", "&8Click to change to player."), player);
+                setSlot(37, new EItem(Material.COMMAND).setName(Msg.CONSOLE_CMD.getMsg()).setLore(Msg.CONSOLE_CMD_DESC.getMsg()), player);
             }
 
             if (template.isIgnoreColors()) {
-                setSlot(38, new EItem(Material.BUCKET).setName("&6&lIgnoring colors").setLore("&7Colors on the unique line will be ignored.",
-                        "&cDon't put any color codes in the syntax of the unique line!", "&aYou can put any colors you want on the actual sign.", "&8Click to change to matching colors."), player);
+                setSlot(38, new EItem(Material.BUCKET).setName(Msg.IGNORE_COLOR.getMsg()).setLore(Msg.IGNORE_COLOR_DESC.getMsg()), player);
             } else {
-                setSlot(38, new EItem(Material.WATER_BUCKET).setName("&e&lMatching colors").setLore("&7Colors on the unique line have to match exactly.",
-                        "&7For example if you put &9[heal] &7as syntax", "&7On the sign you need to put &9[heal] &7too.", "&8Click to change to ignoring colors."), player);
+                setSlot(38, new EItem(Material.WATER_BUCKET).setName(Msg.MATCH_COLOR.getMsg()).setLore(Msg.MATCH_COLOR_DESC.getMsg()), player);
             }
 
             if (template.isEnabled()) {
-                setSlot(40, new EItem(Material.INK_SACK, 1, (short)10).setName("&a&lEnabled").setLore("&7This template is currently &aenabled&7.", "&8Click to disable the template."), player);
+                setSlot(40, new EItem(Material.INK_SACK, 1, (short)10).setName(Msg.ENABLED.getMsg()).setLore(Msg.ENABLED_DESC.getMsg()), player);
             } else {
-                setSlot(40, new EItem(Material.INK_SACK, 1, (short)8).setName("&c&lDisabled").setLore("&7this template is currently &cdisabled&7.",
-                        "&7&oUsers will still be blocked", "&7&ofrom creating/breaking this sign.", "&8Click to enable the template."), player);
+                setSlot(40, new EItem(Material.INK_SACK, 1, (short)8).setName(Msg.DISABLED.getMsg()).setLore(Msg.DISABLED_DESC.getMsg()), player);
             }
 
             if (template.getDelay() > 0) {
-                setSlot(42, new EItem(Material.WATCH).setName("&6&l" + template.getDelay() + " Seconds Delay").setLore("&7Players have to wait &e" + template.getDelay() + " &7seconds",
-                        "&7after using the sign to use it again.", "&aLeft &7click to &aedit &7the delay.", "&eRight &7click to &eremove &7the delay."), player);
+                setSlot(42, new EItem(Material.WATCH).setName(Msg.DELAY_SET.getMsg(Param.P("{seconds}", template.getDelay()))).setLore(Msg.DELAY_SET_DESC.getMsg(Param.P("{seconds}", template.getDelay()))), player);
             } else {
-                setSlot(42, new EItem(Material.WATCH).setName("&c&lNo Delay").setLore("&aClick to set a delay.",
-                        "&7Players will have to wait xxx seconds", "&7after using the sign to use it again", "&7when a delay is set."), player);
+                setSlot(42, new EItem(Material.WATCH).setName(Msg.DELAY.getMsg()).setLore(Msg.DELAY_DESC.getMsg()), player);
             }
 
             if (template.getCost() != null && !template.getCost().isEmpty()) {
-                setSlot(43, new EItem(Material.GOLD_INGOT).setName("&6&lCost&8&l: &e&l" + template.getCost()).setLore("&7Players have to pay &e" + template.getCost() + " &7to use the sign.",
-                        "&aLeft &7click to &aedit &7the cost.", "&eRight &7click to &eremove &7the cost."), player);
+                setSlot(43, new EItem(Material.GOLD_INGOT).setName(Msg.COST_SET.getMsg(Param.P("{cost}", template.getCost()))).setLore(Msg.COST_SET_DESC.getMsg(Param.P("{cost}", template.getCost()))), player);
             } else {
-                setSlot(43, new EItem(Material.GOLD_INGOT).setName("&c&lNo Cost").setLore("&aClick to set a cost.",
-                        "&7Players will have to pay money or items", "&7to use the sign when a cost is set."), player);
+                setSlot(43, new EItem(Material.GOLD_INGOT).setName(Msg.COST.getMsg()).setLore(Msg.COST_DESC.getMsg()), player);
             }
         }
     }
@@ -276,18 +269,18 @@ public class TemplateMenu extends Menu {
         //Disable input when q is typed.
         if (string.equalsIgnoreCase("q")) {
             input.remove(player.getUniqueId());
-            //TODO: Send message that input is disabled.
+            Msg.INPUT_DISABLED.send(player);
             return;
         }
 
         if (type.equalsIgnoreCase("name")) {
             //New template name input
             if (!string.matches("[a-zA-Z]+")) {
-                //TODO: Send message that the name is invalid.
+                Msg.INVALID_NAME.send(player);
                 return;
             }
             if (tm.getTemplate(string) != null) {
-                //TODO: Send message that the name is already used.
+                Msg.NAME_EXISTS.send(player);
                 return;
             }
 
@@ -308,7 +301,7 @@ public class TemplateMenu extends Menu {
         if (template == null) {
             //This should never happen but just in case. (Don't want users getting stuck in input mode)
             input.remove(player.getUniqueId());
-            //TODO: Send message that input is disabled.
+            Msg.INPUT_DISABLED.send(player);
             return;
         }
 
@@ -317,7 +310,7 @@ public class TemplateMenu extends Menu {
             if (template.getUniqueLine() == index) {
                 for (SignTemplate t : tm.getList()) {
                     if (t.getSyntax(t.getUniqueLine()).equalsIgnoreCase(string)) {
-                        //TODO: Send message that the line is not unique and it must be.
+                        Msg.INPUT_NOT_UNIQUE.send(player, Param.P("{line}", index));
                         return;
                     }
                 }

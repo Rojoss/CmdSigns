@@ -2,6 +2,7 @@ package com.jroossien.cmdsigns.listeners;
 
 import com.jroossien.cmdsigns.CmdSigns;
 import com.jroossien.cmdsigns.config.messages.Msg;
+import com.jroossien.cmdsigns.config.messages.Param;
 import com.jroossien.cmdsigns.signs.CmdTrigger;
 import com.jroossien.cmdsigns.signs.SignTemplate;
 import com.jroossien.cmdsigns.util.Argument;
@@ -107,11 +108,10 @@ public class MainListener implements Listener {
             for (int i = 0; i < 4; i++) {
                 event.setLine(i, Util.color(event.getLine(i)));
             }
-            //TODO: Send message sign created
+            Msg.CREATED.send(event.getPlayer(), Param.P("{type}", template.getName()));
         } else {
             event.setCancelled(true);
             event.getPlayer().sendMessage(parser.getError());
-            //TODO: Send message invalid sign syntax.
         }
     }
 
@@ -140,7 +140,7 @@ public class MainListener implements Listener {
             event.setCancelled(true);
         }
 
-        //TODO: Send sign broken message.
+        Msg.DESTROYED.send(event.getPlayer(), Param.P("{type}", template.getName()));
     }
 
     @EventHandler
@@ -204,7 +204,6 @@ public class MainListener implements Listener {
                 }
             } else {
                 player.sendMessage(signParser.getError());
-                //TODO: Send invalid sign syntax message.
             }
         }
     }

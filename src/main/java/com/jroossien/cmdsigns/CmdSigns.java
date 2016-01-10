@@ -63,12 +63,6 @@ public class CmdSigns extends JavaPlugin {
     public void log(Object msg) {
         log.info("[CmdSigns " + getDescription().getVersion() + "] " + msg.toString());
     }
-    public void warn(Object msg) {
-        log.warning("[CmdSigns " + getDescription().getVersion() + "] " + msg.toString());
-    }
-    public void logError(Object msg) {
-        log.severe("[CmdSigns " + getDescription().getVersion() + "] " + msg.toString());
-    }
 
     public static CmdSigns inst() {
         return instance;

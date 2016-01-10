@@ -1,5 +1,7 @@
 package com.jroossien.cmdsigns.util;
 
+import com.jroossien.cmdsigns.config.messages.Msg;
+import com.jroossien.cmdsigns.config.messages.Param;
 import com.jroossien.cmdsigns.signs.SignTemplate;
 
 import java.util.ArrayList;
@@ -41,7 +43,8 @@ public class SignParser {
                 if (argument == null) {
                     //Match regular characters. (in between, before or after placeholder syntax.)
                     if (ch != textChars[textCharIndex]) {
-                        error = "&cSyntax mismatch at &8'&c" + textChars[textCharIndex] + "&8' &con line &4" + (i+1) + " &cexpected &8'&c" + ch + "&8'&c. &4&lSyntax&8: &c&l" + template.getSyntax(i);
+                        error = Msg.INVALID_SYNTAX.getMsg(true, true, Param.P("{found-char}", textChars[textCharIndex]), Param.P("{expected-char}", ch),
+                                Param.P("{line}", i+1), Param.P("{syntax}", template.getSyntax(i)));
                         return;
                     }
                     textCharIndex++;
