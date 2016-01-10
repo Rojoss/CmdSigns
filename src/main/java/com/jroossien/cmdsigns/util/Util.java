@@ -7,6 +7,8 @@ import org.bukkit.command.CommandSender;
 import java.io.File;
 import java.io.FilenameFilter;
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class Util {
 
@@ -137,6 +139,33 @@ public class Util {
 
 
     /**
+     * Splits the specified string in sections.
+     * Strings inside quotes will be placed together in sections.
+     * For example 'Essence is "super awesome"' will return {"essence", "is", "super awesome"}
+     * @author sk89q, desht
+     * @param string The string that needs to be split.
+     * @return List of strings split from the input string.
+     */
+    public static List<String> splitQuotedString(String string) {
+        List<String> sections = new ArrayList<String>();
+
+        Pattern regex = Pattern.compile("[^\\s\"']+|\"([^\"]*)\"|'([^']*)'");
+        Matcher regexMatcher = regex.matcher(string);
+
+        while (regexMatcher.find()) {
+            if (regexMatcher.group(1) != null) {
+                sections.add(regexMatcher.group(1));
+            } else if (regexMatcher.group(2) != null) {
+                sections.add(regexMatcher.group(2));
+            } else {
+                sections.add(regexMatcher.group());
+            }
+        }
+        return sections;
+    }
+
+
+    /**
      * Get a Color from a string.
      * The string can be either rrr,ggg,bbb or #hexhex or without the hashtag.
      * It can also be a name of a color preset.
@@ -193,6 +222,19 @@ public class Util {
     public static Integer getInt(String str) {
         try {
             return Integer.parseInt(str);
+        } catch (NumberFormatException e) {
+        }
+        return null;
+    }
+
+    /**
+     * Convert a string like '1' to a short. Returns null if it's invalid.
+     * @param str
+     * @return short
+     */
+    public static Short getShort(String str) {
+        try {
+            return Short.parseShort(str);
         } catch (NumberFormatException e) {
         }
         return null;
