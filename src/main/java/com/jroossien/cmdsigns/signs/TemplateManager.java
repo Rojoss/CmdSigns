@@ -3,6 +3,7 @@ package com.jroossien.cmdsigns.signs;
 import com.jroossien.cmdsigns.CmdSigns;
 import com.jroossien.cmdsigns.util.Util;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.scheduler.BukkitRunnable;
 
 import java.io.File;
 import java.io.IOException;
@@ -42,8 +43,27 @@ public class TemplateManager {
 
             templateMap.put(entry.getKey(), new SignTemplate(templateCfg, entry.getKey(), syntax, cmds, uniqueLine-1, enabled, playerCmd, ignoreColors, delay, cost));
         }
-
         templates = templateMap;
+
+        new BukkitRunnable() {
+            @Override
+            public void run() {
+                if (templates.size() < 1) {
+                    //Load default [cmd] template
+                    SignTemplate template = createTemplate("cmd");
+                    template.setSyntax(0, "[cmd]");
+                    template.setSyntax(1, "{command}");
+                    template.setSyntax(2, "{arg-1}");
+                    template.setSyntax(3, "{arg-2}");
+                    template.setCommand(CmdTrigger.LEFT, "{command} {arg-1} {arg-2}");
+                    template.setCommand(CmdTrigger.RIGHT, "{command} {arg-1} {arg-2}");
+                    template.setCommand(CmdTrigger.SHIFT_LEFT, "{command} {arg-1} {arg-2}");
+                    template.setCommand(CmdTrigger.SHIFT_RIGHT, "{command} {arg-1} {arg-2}");
+                    template.save();
+                }
+            }
+        }.runTaskLater(cs, 10);
+
         return templates.size();
     }
 
