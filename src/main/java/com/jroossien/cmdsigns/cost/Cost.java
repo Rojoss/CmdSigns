@@ -12,6 +12,9 @@ public abstract class Cost {
     public abstract String format();
 
     public static Cost get(String input) {
+        if (input == null || input.isEmpty()) {
+            return null;
+        }
         String[] split = input.split(":", 2);
         if (split.length <= 1) {
             return null;
