@@ -1,14 +1,20 @@
 package com.jroossien.cmdsigns;
 
 import com.jroossien.cmdsigns.commands.Commands;
+import com.jroossien.cmdsigns.config.PluginCfg;
 import com.jroossien.cmdsigns.config.messages.MessageCfg;
 import com.jroossien.cmdsigns.listeners.MainListener;
 import com.jroossien.cmdsigns.menu.Menu;
 import com.jroossien.cmdsigns.menu.TemplateMenu;
 import com.jroossien.cmdsigns.signs.TemplateManager;
+import net.milkbowl.vault.Vault;
+import net.milkbowl.vault.economy.Economy;
+import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
+import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginManager;
+import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.logging.Logger;
@@ -16,7 +22,10 @@ import java.util.logging.Logger;
 public class CmdSigns extends JavaPlugin {
 
     private static CmdSigns instance;
+    private Vault vault;
+    private Economy economy;
 
+    private PluginCfg cfg;
     private MessageCfg msgCfg;
 
     private Commands cmds;
@@ -37,6 +46,19 @@ public class CmdSigns extends JavaPlugin {
         instance = this;
         log.setParent(this.getLogger());
 
+        Plugin vaultPlugin = getServer().getPluginManager().getPlugin("Vault");
+        if (vaultPlugin != null) {
+            vault = (Vault)vaultPlugin;
+            RegisteredServiceProvider<Economy> economyProvider = getServer().getServicesManager().getRegistration(net.milkbowl.vault.economy.Economy.class);
+            if (economyProvider != null) {
+                economy = economyProvider.getProvider();
+            }
+        }
+        if (economy == null) {
+            log("Failed to load Economy from Vault. The plugin will still work fine but economy costs for signs won't work!");
+        }
+
+        cfg = new PluginCfg("plugins/CmdSigns/CmdSigns.yml");
         msgCfg = new MessageCfg("plugins/CmdSigns/Messages.yml");
 
         cmds = new Commands(this);
@@ -66,6 +88,18 @@ public class CmdSigns extends JavaPlugin {
 
     public static CmdSigns inst() {
         return instance;
+    }
+
+    public Vault getVault() {
+        return vault;
+    }
+
+    public Economy getEco() {
+        return economy;
+    }
+
+    public PluginCfg getCfg() {
+        return cfg;
     }
 
     public MessageCfg getMsgCfg() {
