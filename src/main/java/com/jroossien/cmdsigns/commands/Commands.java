@@ -48,7 +48,7 @@ public class Commands {
                 sender.sendMessage(Util.color("&8===== &4&lCmdSigns Plugin &8=====\n" +
                         "&6&lAuthor&8&l: &aWorstboy(Jos)\n" +
                         "&6&lVersion&8&l: &a" + cs.getDescription().getVersion() + "\n" +
-                        "&6&lSpigot URL&8&l: &9{placeholder}"));
+                        "&6&lSpigot URL&8&l: &9https://www.spigotmc.org/resources/cmdsigns.16904/"));
                 return true;
             }
 
