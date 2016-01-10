@@ -2,7 +2,10 @@ package com.jroossien.cmdsigns.util;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Color;
+import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
+import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.ItemStack;
 
 import java.io.File;
 import java.io.FilenameFilter;
@@ -308,5 +311,91 @@ public class Util {
             }
         }
         return false;
+    }
+
+
+    public static boolean hasItems(Inventory inv, ItemStack item, int amt, boolean checkName, boolean checkDurability) {
+        for (int i = 0; i <= inv.getSize(); i++) {
+            ItemStack stack = inv.getItem(i);
+            if (stack == null) {
+                continue;
+            }
+            //Check if items match
+            if (!compareItems(stack, item, checkName, checkDurability)) {
+                continue;
+            }
+
+            //Remove the items
+            int stackAmt = stack.getAmount();
+            if (stackAmt >= amt) {
+                return true;
+            }
+            amt -= stackAmt;
+        }
+        return amt <= 0;
+    }
+
+
+    /**
+     * Remove items from a Inventory.
+     * It'll check for items of the ItemStack you specified and it will try and remove the specified amt.
+     * If you set checkName to true it will only remove items with the exact same name and the same goes for durability.
+     * If there is a remainder what didn't get removed it will be returned.
+     * @param inv The inventory to remove the items from.
+     * @param item The item to remove (used to check type, durability, name etc)
+     * @param amt The amount of items to try and remove.
+     * @param checkName If set to true only items matching the name will be removed.
+     * @param checkDurability If set to true only items matching durability will be removed.
+     * @return Amount of items that didn't get removed. (remainder)
+     */
+    public static int removeItems(Inventory inv, ItemStack item, int amt, boolean checkName, boolean checkDurability) {
+        int stackAmt;
+        for (int i = 0; i <= inv.getSize(); i++) {
+            ItemStack stack = inv.getItem(i);
+            if (stack == null) {
+                continue;
+            }
+            //Check if items match
+            if (!compareItems(stack, item, checkName, checkDurability)) {
+                continue;
+            }
+
+            //Remove the items
+            stackAmt = stack.getAmount();
+            if (stackAmt > amt) {
+                stack.setAmount(stackAmt - amt);
+                return 0;
+            }
+            inv.setItem(i, new ItemStack(Material.AIR));
+            if (stackAmt == amt) {
+                return 0;
+            }
+            amt -= stackAmt;
+        }
+        return amt;
+    }
+
+    /**
+     * Compare 2 ItemStack's with each other.
+     * If you set checkName to true it will only be called equal when both items have the same name and the same goes for durability.
+     * @param stack1 ItemStack 1 to compare with stack 2.
+     * @param stack2 ItemStack 2 to compare with stack 1.
+     * @param checkName If set to true only items matching the name will be removed.
+     * @param checkDurability If set to true only items matching durability will be removed.
+     * @return
+     */
+    public static boolean compareItems(ItemStack stack1, ItemStack stack2, boolean checkName, boolean checkDurability) {
+        if (stack1.getType() != stack2.getType()) {
+            return false;
+        }
+        if (checkDurability && stack1.getDurability() != stack2.getDurability()) {
+            return false;
+        }
+        if (checkName && stack2.hasItemMeta()) {
+            if (!stack1.hasItemMeta() || !stack1.getItemMeta().getDisplayName().equalsIgnoreCase(stack2.getItemMeta().getDisplayName())) {
+                return false;
+            }
+        }
+        return true;
     }
 }

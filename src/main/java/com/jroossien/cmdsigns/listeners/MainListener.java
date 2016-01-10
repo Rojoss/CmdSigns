@@ -3,6 +3,7 @@ package com.jroossien.cmdsigns.listeners;
 import com.jroossien.cmdsigns.CmdSigns;
 import com.jroossien.cmdsigns.config.messages.Msg;
 import com.jroossien.cmdsigns.config.messages.Param;
+import com.jroossien.cmdsigns.cost.Cost;
 import com.jroossien.cmdsigns.signs.CmdTrigger;
 import com.jroossien.cmdsigns.signs.SignTemplate;
 import com.jroossien.cmdsigns.util.Argument;
@@ -169,12 +170,14 @@ public class MainListener implements Listener {
             return;
         }
 
+        //Check permission
         String perm = "essence.signs.use." + template.getName();
         if (!Util.hasPermission(player, perm)) {
             Msg.NO_PERMISSION.send(player);
             event.setCancelled(true);
         }
 
+        //Get the command based on click action
         String cmd = "";
         if (event.getAction() == Action.LEFT_CLICK_BLOCK) {
             if (player.isSneaking()) {
@@ -191,12 +194,27 @@ public class MainListener implements Listener {
         }
 
         if (cmd != null && !cmd.isEmpty()) {
+            //Parse sign syntax
             SignParser signParser = new SignParser(template, signBlock.getLines());
             if (signParser.isValid()) {
+                //Check delay
+                //TODO: Check delay/cooldown
+
+                //Check/take cost
+                Cost cost = Cost.get(template.getCost());
+                if (!cost.has(player)) {
+                    Msg.COST_FAIL.send(player, Param.P("{type}", template.getName()), Param.P("{cost}", cost.format()));
+                    return;
+                }
+                cost.take(player);
+
+                //Replace command placeholders
                 cmd = cmd.replace("{player}", player.getName());
                 for (Argument arg : signParser.getArguments()) {
                     cmd = cmd.replace("{" + arg.getName() + "}", arg.getValue());
                 }
+
+                //Execute
                 if (template.isPlayerCmd()) {
                     player.performCommand(cmd.trim());
                 } else {

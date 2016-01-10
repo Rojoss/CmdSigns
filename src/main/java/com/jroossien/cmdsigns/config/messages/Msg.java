@@ -8,6 +8,8 @@ public enum Msg {
     NO_PERMISSION(Cat.GENERAL, "&cInsufficient permissions."),
     PLAYER_COMMAND(Cat.GENERAL, "&cThis is a player command only."),
     INVALID_USAGE(Cat.GENERAL, "&cInvalid usage! &7{usage}"),
+    COST_MONEY_SYNTAX(Cat.GENERAL, "${amount}"),
+    COST_EXP_SYNTAX(Cat.GENERAL, "{amount} experience"),
 
     RELOADED(Cat.COMMAND, "&6All configurations reloaded!"),
     TEMPLATES_LOADED(Cat.COMMAND, "&6Loaded in &a&l{count} &6templates."),
@@ -16,6 +18,14 @@ public enum Msg {
     DESTROYED(Cat.SIGN, "&6You've destroyed a &a{type} &6sign!"),
     INVALID_SYNTAX(Cat.SIGN, "&cSyntax mismatch at &8'&c{found-char}&8' &con line &4{line} &cexpected &8'&c{expected-char}&8'&c. &4&lSyntax&8: &c&l{syntax}"),
 
+    INVALID_ITEM_EMPTY(Cat.COST, "&cSpecify an item after the semicolon! &8(&7Example: item:wool:10 1 name:Cloth&8)"),
+    INVALID_ITEM_UNKNOWN(Cat.COST, "&cUnknown item name specified!"),
+    INVALID_ITEM_META(Cat.COST, "&cInvalid meta tag found for &4{type}&c. &8(&7Use {type}:{data}&8)"),
+    INVALID_XP_AMOUNT(Cat.COST, "&cInvalid experience amount! &8(&7Specify a number for the value like xp:100&8)"),
+    INVALID_ECO_AMOUNT(Cat.COST, "&cInvalid economy amount! &8(&7Specify a number for the value like eco:5.8&8)"),
+    NO_VAULT_ECONOMY(Cat.COST, "&cVault Economy dependency isn't loaded so you can't use economy as cost!"),
+    COST_FAIL(Cat.COST, "&cYou can't use this &4{type} &csign because you don't have &4{cost}&c."),
+
     NEW_TEMPLATE(Cat.TEMPLATE, "&6To create a new template &atype the name &6of the template &ain chat&6! &8(&7Type &f&lq &7to quit this input mode&8)"),
     EDIT_SYNTAX(Cat.TEMPLATE, "&6Type the syntax for line &a{line} &6in chat! &8(&7Type &f&lq &7to quit this input mode&8)"),
     EDIT_COMMAND(Cat.TEMPLATE, "&6Type the syntax for the &7'&a{type}&7' &6command in chat! &8(&7Type &f&lq &7to quit this input mode&8)"),
@@ -23,6 +33,10 @@ public enum Msg {
     INVALID_NAME(Cat.TEMPLATE, "&cInvalid template name! &8(&7The name can only have regular characters&8)"),
     NAME_EXISTS(Cat.TEMPLATE, "&cInvalid template name! &8(&7A template with this name already exists&8)"),
     INPUT_NOT_UNIQUE(Cat.TEMPLATE, "&cThe specified input for line &4{line} &cis not unique! &8(&7You're editing the unique line which means the syntax must be unique&8)"),
+    EDIT_COST(Cat.TEMPLATE, "&6Type the cost in chat!\n&7- &aEconomy&8: &7eco:{amount}\n&7- &aItem&8: &7item:{type[:data] amt [name:name] [lore:lore]}\n&7- &aExperience&8: &7xp:{amount}\n&8(&7Type &f&lq &7to quit this input mode&8)"),
+    INVALID_COST(Cat.TEMPLATE, "&cThe specified cost is invalid!\n&4&lOptions&8&l: &ceco:{amount}&8, &citem:{type[:data] amt [meta]}&8, &cxp:{amount}"),
+    EDIT_DELAY(Cat.TEMPLATE, "&6Type the delay in seconds in chat! &8(&7Type &f&lq &7to quit this input mode&8)"),
+    INVALID_DELAY(Cat.TEMPLATE, "&cThe specified delay is invalid! &8(&7Specify a positive number for seconds&8)"),
 
     TITLE(Cat.TEMPLATE_MENU, "&9&lTemplate Editing"),
     PREV_PAGE(Cat.TEMPLATE_MENU, "&6&lPrevious Page"),
@@ -60,9 +74,9 @@ public enum Msg {
     DELAY_SET(Cat.TEMPLATE_MENU, "&6&l{seconds} Seconds Delay"),
     DELAY_SET_DESC(Cat.TEMPLATE_MENU, "&7Players have to wait &e{seconds} &7seconds\n&7after using the sign to use it again.\n&aLeft &7click to &aedit &7the delay.\n&eRight &7click to &eremove &7the delay."),
     COST(Cat.TEMPLATE_MENU, "&c&lNo Cost"),
-    COST_DESC(Cat.TEMPLATE_MENU, "&aClick to set a cost.\n&7Players will have to pay money or items\n&7to use the sign when a cost is set."),
+    COST_DESC(Cat.TEMPLATE_MENU, "&aClick to set a cost.\n&7Players will have to pay money, items or xp\n&7to use the sign when a cost is set."),
     COST_SET(Cat.TEMPLATE_MENU, "&6&lCost&8&l: &e&l{cost}"),
-    COST_SET_DESC(Cat.TEMPLATE_MENU, "&7Players have to pay &e{cost} &7to use the sign.\n&aLeft &7click to &aedit &7the cost.\n&eRight &7click to &eremove &7the cost."),
+    COST_SET_DESC(Cat.TEMPLATE_MENU, "&7Players have to pay to use the sign.\n&aLeft &7click to &aedit &7the cost.\n&eRight &7click to &eremove &7the cost."),
 
     ;
 
@@ -131,6 +145,7 @@ public enum Msg {
         GENERAL,
         COMMAND,
         SIGN,
+        COST,
         TEMPLATE,
         TEMPLATE_MENU,
         ;

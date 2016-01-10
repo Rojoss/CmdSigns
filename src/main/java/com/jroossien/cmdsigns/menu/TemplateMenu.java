@@ -3,6 +3,7 @@ package com.jroossien.cmdsigns.menu;
 import com.jroossien.cmdsigns.CmdSigns;
 import com.jroossien.cmdsigns.config.messages.Msg;
 import com.jroossien.cmdsigns.config.messages.Param;
+import com.jroossien.cmdsigns.cost.Cost;
 import com.jroossien.cmdsigns.signs.CmdTrigger;
 import com.jroossien.cmdsigns.signs.SignTemplate;
 import com.jroossien.cmdsigns.signs.TemplateManager;
@@ -144,8 +145,9 @@ public class TemplateMenu extends Menu {
             } else if (event.getRawSlot() == 42) {
                 //Set Delay
                 if (event.isLeftClick()) {
-                    //TODO: Start input session instead (placeholder)
-                    template.setDelay(60);
+                    input.put(uuid, "delay");
+                    player.closeInventory();
+                    Msg.EDIT_DELAY.send(player);
                 } else if (event.isRightClick()) {
                     template.setDelay(0);
                 }
@@ -154,8 +156,9 @@ public class TemplateMenu extends Menu {
             } else if (event.getRawSlot() == 43) {
                 //Set Cost
                 if (event.isLeftClick()) {
-                    //TODO: Start input session instead (placeholder)
-                    template.setCost("$100");
+                    input.put(uuid, "cost");
+                    player.closeInventory();
+                    Msg.EDIT_COST.send(player);
                 } else if (event.isRightClick()) {
                     template.setCost("");
                 }
@@ -250,7 +253,8 @@ public class TemplateMenu extends Menu {
             }
 
             if (template.getCost() != null && !template.getCost().isEmpty()) {
-                setSlot(43, new EItem(Material.GOLD_INGOT).setName(Msg.COST_SET.getMsg(Param.P("{cost}", template.getCost()))).setLore(Msg.COST_SET_DESC.getMsg(Param.P("{cost}", template.getCost()))), player);
+                Cost cost = Cost.get(template.getCost());
+                setSlot(43, new EItem(Material.GOLD_INGOT).setName(Msg.COST_SET.getMsg(Param.P("{cost}", cost.format()))).setLore(Msg.COST_SET_DESC.getMsg(Param.P("{cost}", cost.format()))), player);
             } else {
                 setSlot(43, new EItem(Material.GOLD_INGOT).setName(Msg.COST.getMsg()).setLore(Msg.COST_DESC.getMsg()), player);
             }
@@ -305,6 +309,46 @@ public class TemplateMenu extends Menu {
             return;
         }
 
+
+        if (type.equalsIgnoreCase("delay")) {
+            //Delay input
+            Integer delay = Util.getInt(string);
+            if (delay == null || delay < 0) {
+                Msg.INVALID_DELAY.send(player);
+                return;
+            }
+
+            input.remove(player.getUniqueId());
+            template.setDelay(delay);
+            template.save();
+            show(player);
+            updateContent(player);
+            return;
+        }
+
+        if (type.equalsIgnoreCase("cost")) {
+            //Cost input
+            Cost cost = Cost.get(string);
+            if (cost == null) {
+                Msg.INVALID_COST.send(player);
+                return;
+            }
+
+            if (!cost.success) {
+                player.sendMessage(cost.error);
+                return;
+            }
+
+            input.remove(player.getUniqueId());
+            template.setCost(string);
+            template.save();
+            show(player);
+            updateContent(player);
+            return;
+        }
+
+
+        //Syntax and command input
         int index = Util.getInt(type.split("-")[1]);
         if (type.startsWith("syntax")) {
             if (template.getUniqueLine() == index) {

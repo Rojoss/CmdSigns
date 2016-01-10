@@ -1,6 +1,8 @@
 package com.jroossien.cmdsigns.cost;
 
 import com.jroossien.cmdsigns.CmdSigns;
+import com.jroossien.cmdsigns.config.messages.Msg;
+import com.jroossien.cmdsigns.config.messages.Param;
 import com.jroossien.cmdsigns.util.EItem;
 import com.jroossien.cmdsigns.util.Util;
 import net.milkbowl.vault.item.ItemInfo;
@@ -21,14 +23,17 @@ public class ItemCost extends Cost {
     }
 
     public boolean has(Player player) {
-        int amount = item.getAmount();
-        EItem clone = item.clone();
-        clone.setAmount(1);
-        return player.getInventory().contains(clone, amount);
+        return Util.hasItems(player.getInventory(), item, item.getAmount(), true, true);
     }
 
     public void take(Player player) {
-        player.getInventory().remove(item);
+        Util.removeItems(player.getInventory(), item, item.getAmount(), true, true);
+        player.updateInventory();
+    }
+
+    public String format() {
+        return item.getAmount() + " " + item.getType().toString().toLowerCase().replace("_", " ") + (item.getDurability() > 0 ? ":" + item.getDurability() : "") +
+                (item.getItemMeta().hasDisplayName() ? " name:" + item.getName() : "");
     }
 
     public void parse(String input) {
@@ -36,7 +41,7 @@ public class ItemCost extends Cost {
 
         String[] words = input.split(" ");
         if (input == null || input.trim().length() < 1) {
-            //error - No item specified
+            error = Msg.INVALID_ITEM_EMPTY.getMsg(true, true);
             return;
         }
 
@@ -47,7 +52,7 @@ public class ItemCost extends Cost {
         String[] split = sections.get(0).split(":");
         Material material = Material.matchMaterial(split[0]);
         Short data = 0;
-        if (split.length > 0) {
+        if (split.length > 1) {
             data = Util.getShort(split[1]);
             if (data == null) {
                  data = 0;
@@ -64,7 +69,7 @@ public class ItemCost extends Cost {
         }
 
         if (material == null || material == Material.AIR) {
-            //error - Unknown item
+            error = Msg.INVALID_ITEM_UNKNOWN.getMsg(true, true);
             return;
         }
         item.setType(material);
@@ -74,6 +79,7 @@ public class ItemCost extends Cost {
         //If there is no meta specified we're done parsing...
         if (sections.size() < 2) {
             this.item = item;
+            success = true;
             return;
         }
         ItemMeta defaultMeta = Bukkit.getServer().getItemFactory().getItemMeta(item.getType());
@@ -89,7 +95,7 @@ public class ItemCost extends Cost {
 
             split = section.split(":", 2);
             if (split.length < 2) {
-                //error - Invalid meta tag (empty)
+                error = Msg.INVALID_ITEM_META.getMsg(true, true, Param.P("{type}", split[0]));
                 return;
             }
 
@@ -97,12 +103,6 @@ public class ItemCost extends Cost {
             if (split[0].equalsIgnoreCase("name")) {
                 item.setName(split[1].replace("_", " "));
             }
-
-            //Lore
-            if (split[0].equalsIgnoreCase("lore")) {
-                item.setLore(split[1].replace("_", " ").replace("|", "\n"));
-            }
-
             //TODO: Maybe add more meta tags but don't think it's needed.
         }
 

@@ -4,11 +4,12 @@ import org.bukkit.entity.Player;
 
 public abstract class Cost {
     public boolean success;
-    public String error;
+    public String error = "unknown error";
 
-    abstract void parse(String input);
-    abstract boolean has(Player player);
-    abstract void take(Player player);
+    public abstract void parse(String input);
+    public abstract boolean has(Player player);
+    public abstract void take(Player player);
+    public abstract String format();
 
     public static Cost get(String input) {
         String[] split = input.split(":", 2);
