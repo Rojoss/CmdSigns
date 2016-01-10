@@ -17,6 +17,7 @@ public enum Msg {
     CREATED(Cat.SIGN, "&6You've created a &a{type} &6sign!"),
     DESTROYED(Cat.SIGN, "&6You've destroyed a &a{type} &6sign!"),
     INVALID_SYNTAX(Cat.SIGN, "&cSyntax mismatch at &8'&c{found-char}&8' &con line &4{line} &cexpected &8'&c{expected-char}&8'&c. &4&lSyntax&8: &c&l{syntax}"),
+    DELAYED(Cat.SIGN, "&cYou can't use this sign for another &4{seconds} &cseconds!"),
 
     INVALID_ITEM_EMPTY(Cat.COST, "&cSpecify an item after the semicolon! &8(&7Example: item:wool:10 1 name:Cloth&8)"),
     INVALID_ITEM_UNKNOWN(Cat.COST, "&cUnknown item name specified!"),

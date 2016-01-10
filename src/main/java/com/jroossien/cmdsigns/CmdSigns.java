@@ -1,6 +1,7 @@
 package com.jroossien.cmdsigns;
 
 import com.jroossien.cmdsigns.commands.Commands;
+import com.jroossien.cmdsigns.config.DelayCfg;
 import com.jroossien.cmdsigns.config.PluginCfg;
 import com.jroossien.cmdsigns.config.messages.MessageCfg;
 import com.jroossien.cmdsigns.listeners.MainListener;
@@ -26,6 +27,7 @@ public class CmdSigns extends JavaPlugin {
     private Economy economy;
 
     private PluginCfg cfg;
+    private DelayCfg delays;
     private MessageCfg msgCfg;
 
     private Commands cmds;
@@ -37,6 +39,7 @@ public class CmdSigns extends JavaPlugin {
 
     @Override
     public void onDisable() {
+        delays.save();
         instance = null;
         log("disabled");
     }
@@ -59,6 +62,7 @@ public class CmdSigns extends JavaPlugin {
         }
 
         cfg = new PluginCfg("plugins/CmdSigns/CmdSigns.yml");
+        delays = new DelayCfg("plugins/CmdSigns/data/Delays.yml");
         msgCfg = new MessageCfg("plugins/CmdSigns/Messages.yml");
 
         cmds = new Commands(this);
@@ -100,6 +104,10 @@ public class CmdSigns extends JavaPlugin {
 
     public PluginCfg getCfg() {
         return cfg;
+    }
+
+    public DelayCfg getDelays() {
+        return delays;
     }
 
     public MessageCfg getMsgCfg() {

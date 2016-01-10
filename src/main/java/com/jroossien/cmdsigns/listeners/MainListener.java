@@ -198,15 +198,24 @@ public class MainListener implements Listener {
             SignParser signParser = new SignParser(template, signBlock.getLines());
             if (signParser.isValid()) {
                 //Check delay
-                //TODO: Check delay/cooldown
+                if (template.getDelay() > 0) {
+                    Long delay = cs.getDelays().getDelay(player.getUniqueId(), template.getName());
+                    if (delay > 0) {
+                        Msg.DELAYED.send(player, Param.P("{seconds}", (int)Math.ceil(delay / 1000)));
+                        return;
+                    }
+                    cs.getDelays().setDelay(player.getUniqueId(), template);
+                }
 
                 //Check/take cost
                 Cost cost = Cost.get(template.getCost());
-                if (!cost.has(player)) {
-                    Msg.COST_FAIL.send(player, Param.P("{type}", template.getName()), Param.P("{cost}", cost.format()));
-                    return;
+                if (cost != null) {
+                    if (!cost.has(player)) {
+                        Msg.COST_FAIL.send(player, Param.P("{type}", template.getName()), Param.P("{cost}", cost.format()));
+                        return;
+                    }
+                    cost.take(player);
                 }
-                cost.take(player);
 
                 //Replace command placeholders
                 cmd = cmd.replace("{player}", player.getName());
