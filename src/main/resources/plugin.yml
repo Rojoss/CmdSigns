@@ -5,6 +5,10 @@ description: ${project.description}
 author: ${project.author}
 softdepend: [Vault]
 commands:
+  cmdsigns:
+    description: Main CmdSigns command.
+    usage: /<command> [reload|loadtemplates|info]
+    aliases: [cmdsign]
   signs:
     description: Displays the signs templates menu.
     usage: /<command>

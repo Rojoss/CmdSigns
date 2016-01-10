@@ -24,7 +24,7 @@ public class TemplateManager {
         reloadTemplates();
     }
 
-    public void reloadTemplates() {
+    public int reloadTemplates() {
         Map<String, SignTemplate> templateMap = new HashMap<String, SignTemplate>();
 
         Map<String, File> configFiles = Util.getFiles(templateDir, "yml");
@@ -44,6 +44,7 @@ public class TemplateManager {
         }
 
         templates = templateMap;
+        return templates.size();
     }
 
     public SignTemplate createTemplate(String name) {

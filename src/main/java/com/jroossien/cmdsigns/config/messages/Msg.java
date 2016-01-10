@@ -7,6 +7,10 @@ import org.bukkit.command.CommandSender;
 public enum Msg {
     NO_PERMISSION(Cat.GENERAL, "&cInsufficient permissions."),
     PLAYER_COMMAND(Cat.GENERAL, "&cThis is a player command only."),
+    INVALID_USAGE(Cat.GENERAL, "&cInvalid usage! &7{usage}"),
+
+    RELOADED(Cat.COMMAND, "&6All configurations reloaded!"),
+    TEMPLATES_LOADED(Cat.COMMAND, "&6Loaded in &a&l{count} &6templates."),
 
     ;
 
@@ -69,6 +73,7 @@ public enum Msg {
 
     private enum Cat {
         GENERAL,
+        COMMAND,
         ;
     }
 }
