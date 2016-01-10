@@ -1,6 +1,7 @@
 package com.jroossien.cmdsigns.listeners;
 
 import com.jroossien.cmdsigns.CmdSigns;
+import com.jroossien.cmdsigns.config.messages.Msg;
 import com.jroossien.cmdsigns.signs.CmdTrigger;
 import com.jroossien.cmdsigns.signs.SignTemplate;
 import com.jroossien.cmdsigns.util.Argument;
@@ -97,7 +98,7 @@ public class MainListener implements Listener {
         }
         String perm = "cmdsigns.signs.create." + template.getName();
         if (!Util.hasPermission(event.getPlayer(), perm)) {
-            //TODO: Send no permission message.
+            Msg.NO_PERMISSION.send(event.getPlayer());
             event.setCancelled(true);
         }
 
@@ -135,7 +136,7 @@ public class MainListener implements Listener {
 
         String perm = "cmdsigns.signs.break." + template.getName();
         if (!Util.hasPermission(event.getPlayer(), perm)) {
-            //TODO: Send no permission message.
+            Msg.NO_PERMISSION.send(event.getPlayer());
             event.setCancelled(true);
         }
 
@@ -170,7 +171,7 @@ public class MainListener implements Listener {
 
         String perm = "essence.signs.use." + template.getName();
         if (!Util.hasPermission(player, perm)) {
-            //TODO: Send no permission message.
+            Msg.NO_PERMISSION.send(player);
             event.setCancelled(true);
         }
 

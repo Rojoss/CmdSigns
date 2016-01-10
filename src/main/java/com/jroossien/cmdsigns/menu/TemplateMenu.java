@@ -104,6 +104,7 @@ public class TemplateMenu extends Menu {
                     template.save();
                     updateContent(player);
                 } else if (event.getClick() == ClickType.SHIFT_LEFT) {
+                    //TODO: Check if line syntax is unique before setting it.
                     template.setUniqueLine(event.getRawSlot() - 18);
                     template.save();
                     updateContent(player);
