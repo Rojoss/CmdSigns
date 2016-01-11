@@ -197,6 +197,15 @@ public class MainListener implements Listener {
             //Parse sign syntax
             SignParser signParser = new SignParser(template, signBlock.getLines());
             if (signParser.isValid()) {
+                //Check cost
+                Cost cost = Cost.get(template.getCost());
+                if (cost != null) {
+                    if (!cost.has(player)) {
+                        Msg.COST_FAIL.send(player, Param.P("{type}", template.getName()), Param.P("{cost}", cost.format()));
+                        return;
+                    }
+                }
+
                 //Check delay
                 if (template.getDelay() > 0) {
                     Long delay = cs.getDelays().getDelay(player.getUniqueId(), template.getName());
@@ -207,13 +216,8 @@ public class MainListener implements Listener {
                     cs.getDelays().setDelay(player.getUniqueId(), template);
                 }
 
-                //Check/take cost
-                Cost cost = Cost.get(template.getCost());
+                //Take cost
                 if (cost != null) {
-                    if (!cost.has(player)) {
-                        Msg.COST_FAIL.send(player, Param.P("{type}", template.getName()), Param.P("{cost}", cost.format()));
-                        return;
-                    }
                     cost.take(player);
                 }
 

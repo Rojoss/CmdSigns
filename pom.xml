@@ -6,7 +6,7 @@
 
     <groupId>com.jroossien</groupId>
     <artifactId>cmdsigns</artifactId>
-    <version>0.1-SNAPSHOT</version>
+    <version>0.2-SNAPSHOT</version>
     <description>Advanced command signs</description>
 
     <properties>
